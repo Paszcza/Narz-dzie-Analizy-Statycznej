@@ -1,0 +1,11 @@
+﻿  ReportPrinter.cpp
+C:\Users\Paweł\source\repos\Narzędzie Analizy Statycznej\Narzędzie Analizy Statycznej\ReportPrinter.cpp(52,44): warning C4996: 'ctime': This function or variable may be unsafe. Consider using ctime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Paweł\source\repos\Narzędzie Analizy Statycznej\Narzędzie Analizy Statycznej\ReportPrinter.cpp(56,38): warning C4996: 'ctime': This function or variable may be unsafe. Consider using ctime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Paweł\source\repos\Narzędzie Analizy Statycznej\Narzędzie Analizy Statycznej\ReportPrinter.cpp(61,40): warning C4996: 'ctime': This function or variable may be unsafe. Consider using ctime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Paweł\source\repos\Narzędzie Analizy Statycznej\Narzędzie Analizy Statycznej\ReportPrinter.cpp(66,39): warning C4996: 'ctime': This function or variable may be unsafe. Consider using ctime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  Trwa generowanie kodu
+  2 of 1319 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    3 functions had inline decision re-evaluated but remain unchanged
+  Zakończono generowanie kodu
+  Narzędzie Analizy Statycznej.vcxproj -> C:\Users\Paweł\source\repos\Narzędzie Analizy Statycznej\x64\Release\NAS.exe

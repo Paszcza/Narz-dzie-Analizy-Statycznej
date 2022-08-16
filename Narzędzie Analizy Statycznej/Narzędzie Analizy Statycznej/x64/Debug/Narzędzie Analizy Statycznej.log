@@ -1,0 +1,13 @@
+﻿  ASTTraversal.cpp
+  Config.cpp
+  TaintTracking.cpp
+C:\Users\Paweł\source\repos\Narzędzie Analizy Statycznej\Narzędzie Analizy Statycznej\TaintTracking.cpp(56,47): warning C4267: "inicjowanie": konwersja z "size_t" do "int", możliwa utrata danych
+  NAS.cpp
+  LibclangHandling.cpp
+  ReportPrinter.cpp
+C:\Users\Paweł\source\repos\Narzędzie Analizy Statycznej\Narzędzie Analizy Statycznej\ReportPrinter.cpp(52,44): warning C4996: 'ctime': This function or variable may be unsafe. Consider using ctime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Paweł\source\repos\Narzędzie Analizy Statycznej\Narzędzie Analizy Statycznej\ReportPrinter.cpp(56,38): warning C4996: 'ctime': This function or variable may be unsafe. Consider using ctime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Paweł\source\repos\Narzędzie Analizy Statycznej\Narzędzie Analizy Statycznej\ReportPrinter.cpp(61,40): warning C4996: 'ctime': This function or variable may be unsafe. Consider using ctime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  UserInput.cpp
+  Generowanie kodu...
+  Narzędzie Analizy Statycznej.vcxproj -> C:\Users\Paweł\source\repos\Narzędzie Analizy Statycznej\x64\Debug\NAS.exe
