@@ -16,7 +16,7 @@ bool resolveMultipleNodesTaint(std::vector<TaintNode> taintNodeList, std::vector
 	return false;
 }
 
-bool trackThroughFunction(std::string functionName, FunctionMap functionMap, ConfigTaintData configTaintData, std::vector<Event>* eventList, std::vector<bool> paramsTaint, std::vector<Param> params) {
+bool trackThroughFunction(std::string functionName, FunctionMap functionMap, ConfigTaintData configTaintData, std::vector<Event>* eventList, std::vector<bool>* paramsTaint, std::vector<Param> params) {
 
 	bool returnTaint = false;
 	std::vector<TaintNode> taintNodeList = {};
@@ -24,8 +24,8 @@ bool trackThroughFunction(std::string functionName, FunctionMap functionMap, Con
 	for (GraphNodeData nodeData : dfGraph.nodeList) {
 		taintNodeList.push_back({ false, {} });
 	}
-	for (int i = 0; i < paramsTaint.size(); i++) {
-		taintNodeList[i].tainted = paramsTaint[i];
+	for (int i = 0; i < paramsTaint->size(); i++) {
+		taintNodeList[i].tainted = (*paramsTaint)[i];
 		if (params.size() > i)
 			if (params[i].isRef) {
 				taintNodeList[i].refPath.insert(i);
@@ -84,19 +84,14 @@ bool trackThroughFunction(std::string functionName, FunctionMap functionMap, Con
 					}
 				}
 				if (functionMap.find(callNode.name) != functionMap.end()) {
-					taintNodeList[nodeIndex].tainted = trackThroughFunction(callNode.name, functionMap, configTaintData, eventList, paramsTaint, callNode.params);
-				}
-				else {
-					for(bool paramTaint : paramsTaint) {
-						if (paramTaint) {
-							taintNodeList[nodeIndex].tainted;
-						}
-					}
-				}
-			}
-			else {
-				if (functionMap.find(callNode.name) != functionMap.end()) {
-					taintNodeList[nodeIndex].tainted = trackThroughFunction(callNode.name, functionMap, configTaintData, eventList, paramsTaint, callNode.params);
+
+					taintNodeList[nodeIndex].tainted = trackThroughFunction(callNode.name, functionMap, configTaintData, eventList, &paramsTaint, callNode.params);
+					for (int i = 0; i < paramsTaint.size(); i++)
+						if (paramsTaint[i]  && i < callNode.params.size())
+							if(callNode.params[i].isRef)
+								for (int node : callNode.params[i].nodes) {
+									taintNodeList[node].tainted = true;
+								}
 				}
 				else {
 					for (bool paramTaint : paramsTaint) {
@@ -106,13 +101,32 @@ bool trackThroughFunction(std::string functionName, FunctionMap functionMap, Con
 					}
 				}
 			}
+			else {
+				if (functionMap.find(callNode.name) != functionMap.end()) {
+
+					taintNodeList[nodeIndex].tainted = trackThroughFunction(callNode.name, functionMap, configTaintData, eventList, &paramsTaint, callNode.params);
+					for (int i = 0; i < paramsTaint.size(); i++)
+						if (paramsTaint[i] && i < callNode.params.size())
+							if (callNode.params[i].isRef)
+								for (int node : callNode.params[i].nodes) {
+									taintNodeList[node].tainted = true;
+								}
+				}
+				else {
+					for (bool paramTaint : paramsTaint) {
+						if (paramTaint) {
+							taintNodeList[nodeIndex].tainted;
+							for (Param param : referenceParams) {
+								for (int node : param.nodes) {
+									taintNodeList[node].tainted = true;
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 		if (taintNodeList[nodeIndex].tainted) {
-
-			if (!taintNodeList[nodeIndex].refPath.empty()) {
-				std::set<int> paramIndexSet = taintNodeList[nodeIndex].refPath;
-				eventList->push_back({ EventType::taint_to_reference, functionMap.at(functionName).file, functionName, graphNodeData.line, graphNodeData.column, &paramIndexSet });
-			}
 			for (int adjacentNode : graphNodeData.adjacency) {
 
 				taintNodeList[adjacentNode].tainted = true;
@@ -121,6 +135,19 @@ bool trackThroughFunction(std::string functionName, FunctionMap functionMap, Con
 				}
 			}
 		}
+	}
+	for (int nodeIndex = 0; nodeIndex < dfGraph.nodeList.size(); nodeIndex++) {
+
+		GraphNodeData graphNodeData = dfGraph.nodeList[nodeIndex];
+		if (taintNodeList[nodeIndex].tainted) 
+			if (!taintNodeList[nodeIndex].refPath.empty()) {
+
+				std::set<int> paramIndexSet = taintNodeList[nodeIndex].refPath;
+				eventList->push_back({ EventType::taint_to_reference, functionMap.at(functionName).file, functionName, graphNodeData.line, graphNodeData.column, &paramIndexSet });
+				for (int index : taintNodeList[nodeIndex].refPath) {
+					(*paramsTaint)[index] = true;
+				}
+			}
 	}
 	for (int returnNode : dfGraph.returnNodes) {
 		if (taintNodeList[returnNode].tainted) {

@@ -36,7 +36,7 @@ using TaintNode = struct {
 bool trackThroughFunction(
 	std::string functionName, FunctionMap functionMap,
 	ConfigTaintData configTaintData, std::vector<Event>* eventList,
-	std::vector<bool> paramsTaint, std::vector<Param> params
+	std::vector<bool>* paramsTaint, std::vector<Param> params
 );
 
 #endif

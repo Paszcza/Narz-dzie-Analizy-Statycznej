@@ -60,8 +60,10 @@ int createNodeFunctionCall(DataFlowGraph* dfGraph, VarDictionary* varDict, CXCur
 			std::vector<std::string> traversalResult = traverseExpression(dfGraph, varDict, cxChildCursor, newNode);
 			for (auto& element : traversalResult) {
 
-				newFunctionNode.params[i - 1].nodes.push_back(varDict->at(element));
-				if (nas_getCursorTypeKind(cxChildCursor) == "Pointer") {
+				if (varDict->find(element) != varDict->end()){
+					newFunctionNode.params[i - 1].nodes.push_back(varDict->at(element));
+				}
+				if (nas_getCursorTypeKind(cxChildCursor) == "Pointer" || nas_getCursorTypeKind(cxChildCursor) == "IncompleteArray") {
 					newFunctionNode.params[i - 1].isRef = true;
 				}
 			}
@@ -151,6 +153,8 @@ void traverseCompoundStatement(DataFlowGraph* dfGraph, VarDictionary* varDict, C
 		case CXCursorKind::CXCursor_WhileStmt:
 		case CXCursorKind::CXCursor_DoStmt:
 		case CXCursorKind::CXCursor_ForStmt:
+		case CXCursorKind::CXCursor_SwitchStmt:
+		case CXCursorKind::CXCursor_CaseStmt:
 			traverseCompoundStatement(dfGraph, varDict, cxChildCursor);
 			break;
 		case CXCursorKind::CXCursor_DeclStmt:

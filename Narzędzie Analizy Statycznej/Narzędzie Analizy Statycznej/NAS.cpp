@@ -27,12 +27,10 @@ int main(int argc, char** argv) {
             if (userInput.startingFunction == "main") {
                 paramTaint = {true, true};
             }
-            trackThroughFunction(userInput.startingFunction, functionMap, configTaintData, &eventList, paramTaint, {});
+            trackThroughFunction(userInput.startingFunction, functionMap, configTaintData, &eventList, &paramTaint, {});
         }
         else {
-
-            std::cout << "ERROR: Couldn't find the starting function in the files (\"main\" is the default starting function)." << std::endl;
-            trackThroughFunction(userInput.startingFunction, functionMap, configTaintData, &eventList, {true, true}, {});
+            std::cout << "ERROR: Couldn't find the starting function in the files." << std::endl;
         }
         printReport(eventList, userInput.outputFileName);
     }

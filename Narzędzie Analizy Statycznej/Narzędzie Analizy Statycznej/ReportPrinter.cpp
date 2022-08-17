@@ -43,23 +43,24 @@ void printEvents(std::vector<Event> eventList, std::ostream& stream) {
 void printReport(std::vector<Event> eventList, std::string outputFileName) {
 
 	std::time_t now = time(0);
-	if (!eventList.empty()) {
-		if (!outputFileName.empty()) {
+	if (!outputFileName.empty()) {
 
-			std::ofstream stream{ outputFileName };
-			if (!stream) {
-				std::cout << "ERROR: couldn't open file for writing. The report will be printed in the command prompt." << std::endl;
-				std::cout << "Report generated at " << ctime(&now) << std::endl;
+		std::ofstream stream{ outputFileName };
+		if (!stream) {
+			std::cout << "ERROR: couldn't open file for writing. The report will be printed in the command prompt." << std::endl;
+			std::cout << "Report generated at " << ctime(&now) << std::endl;
+			if (!eventList.empty())
 				printEvents(eventList, std::cout);
-			}
-			else {
-				stream << "Report generated " << ctime(&now) << std::endl;
-				printEvents(eventList, stream);
-			}
 		}
 		else {
-			std::cout << "Report generated " << ctime(&now) << std::endl;
-			printEvents(eventList, std::cout);
+			stream << "Report generated " << ctime(&now) << std::endl;
+			if (!eventList.empty())
+				printEvents(eventList, stream);
 		}
+	}
+	else {
+		std::cout << "Report generated " << ctime(&now) << std::endl;
+		if (!eventList.empty())
+			printEvents(eventList, std::cout);
 	}
 }
