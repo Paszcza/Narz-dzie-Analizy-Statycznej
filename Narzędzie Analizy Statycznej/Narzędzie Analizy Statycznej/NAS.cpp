@@ -14,17 +14,25 @@ int main(int argc, char** argv) {
     UserInput userInput = parseUserInput(argc, argv);
     ConfigTaintData configTaintData = getDataAnalysisConfig();
 
-    FunctionMap functionMap;
+    FunctionMap functionMap = {};
     std::vector<Event> eventList;
     if (!userInput.inputFileNames.empty()) {
+
         for (std::string fileName : userInput.inputFileNames) {
             traverseFile(fileName, &functionMap);
         }
         if (functionMap.find(userInput.startingFunction) != functionMap.end()) {
-            trackThroughFunction(userInput.startingFunction, functionMap, configTaintData, &eventList, {}, {});
+            
+            std::vector<bool> paramTaint = {};
+            if (userInput.startingFunction == "main") {
+                paramTaint = {true, true};
+            }
+            trackThroughFunction(userInput.startingFunction, functionMap, configTaintData, &eventList, paramTaint, {});
         }
         else {
+
             std::cout << "ERROR: Couldn't find the starting function in the files (\"main\" is the default starting function)." << std::endl;
+            trackThroughFunction(userInput.startingFunction, functionMap, configTaintData, &eventList, {true, true}, {});
         }
         printReport(eventList, userInput.outputFileName);
     }

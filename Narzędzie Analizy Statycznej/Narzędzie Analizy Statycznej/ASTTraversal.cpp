@@ -215,24 +215,33 @@ void traverseFile(std::string fileName, FunctionMap* functionMap) {
 
 	CXIndex cxIndex = clang_createIndex(1, 0);
 	CXTranslationUnit cxTU = clang_parseTranslationUnit(cxIndex, fileName.c_str(), nullptr, 0, nullptr, 0, CXTranslationUnit_None);
-	CXCursor cxTUCursor = clang_getTranslationUnitCursor(cxTU);
-	for (int i = 0; i < nas_getCursorChildCount(cxTUCursor); i++) {
+	if (cxTU == nullptr) {
+		std::cout << "ERROR: couldn't parse file " << fileName << std::endl;
+	}
+	else {
 
-		CXCursor cxChildCursor = nas_getCursorChild(cxTUCursor, i);
-		std::vector<std::string> globalVars;
-		switch (clang_getCursorKind(cxChildCursor)) {
+		CXCursor cxTUCursor = clang_getTranslationUnitCursor(cxTU);
+		for (int i = 0; i < nas_getCursorChildCount(cxTUCursor); i++) {
 
-		case CXCursorKind::CXCursor_FunctionDecl:
-		{
-			FunctionData fData = { fileName, traverseFunction(cxChildCursor, globalVars) };
-			functionMap->insert_or_assign(nas_getCursorSpelling(cxChildCursor), fData);
-		}
-			break;
-		case CXCursorKind::CXCursor_VarDecl:
-			if (std::find(globalVars.begin(), globalVars.end(), nas_getCursorUSR(cxChildCursor)) == globalVars.end()) {
-				globalVars.push_back(nas_getCursorUSR(cxChildCursor));
+			CXCursor cxChildCursor = nas_getCursorChild(cxTUCursor, i);
+			if (clang_Location_isFromMainFile(clang_getCursorLocation(cxChildCursor))) {
+
+				std::vector<std::string> globalVars;
+				switch (clang_getCursorKind(cxChildCursor)) {
+
+				case CXCursorKind::CXCursor_FunctionDecl:
+				{
+					FunctionData fData = { fileName, traverseFunction(cxChildCursor, globalVars) };
+					functionMap->insert_or_assign(nas_getCursorSpelling(cxChildCursor), fData);
+				}
+				break;
+				case CXCursorKind::CXCursor_VarDecl:
+					if (std::find(globalVars.begin(), globalVars.end(), nas_getCursorUSR(cxChildCursor)) == globalVars.end()) {
+						globalVars.push_back(nas_getCursorUSR(cxChildCursor));
+					}
+					break;
+				}
 			}
-			break;
 		}
 	}
 	clang_disposeTranslationUnit(cxTU);

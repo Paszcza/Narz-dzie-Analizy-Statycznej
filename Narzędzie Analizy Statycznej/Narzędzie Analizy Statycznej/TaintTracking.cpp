@@ -26,9 +26,10 @@ bool trackThroughFunction(std::string functionName, FunctionMap functionMap, Con
 	}
 	for (int i = 0; i < paramsTaint.size(); i++) {
 		taintNodeList[i].tainted = paramsTaint[i];
-		if (params[i].isRef) {
-			taintNodeList[i].refPath.insert(i);
-		}
+		if (params.size() > i)
+			if (params[i].isRef) {
+				taintNodeList[i].refPath.insert(i);
+			}
 	}
 
 	for (int nodeIndex = 0; nodeIndex < dfGraph.nodeList.size(); nodeIndex++) {
